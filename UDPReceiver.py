@@ -2,32 +2,37 @@
     Simple UDP socket server
 """
 
-from socket import *
-import sys
-import select
+import socket
 
-host = ""
-port = 9999
+def listen():
+    localIP = ""
+    localPort = 11000
+    bufferSize = 1024
 
-s = socket(AF_INET, SOCK_DGRAM)
-s.bind((host, port))
+    msgFromServer = "Hello UDP client"
+    bytesToSend = str.encode(msgFromServer)
 
-addr = (host, port)
-buffer = 1024
+    # Create a Socket:
+    UDPServerSocket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
 
-data,addr = s.recvfrom(buffer)
-print("Received File: " + data.strip())
+    # Bind to address and ip:
+    UDPServerSocket.bind((localIP, localPort))
+    print("Server up and listening")
 
-f = open(data.strip(), 'wb')
+    # Listen for incoming datagrams
+    while (True):
+        bytesAddressPair = UDPServerSocket.recvfrom(bufferSize)
+        message = bytesAddressPair[0]
+        address = bytesAddressPair[1]
 
-data,addr = s.recvfrom(buffer)
+        clientMsg = "Message from Client:{}".format(message)
+        clientIP = "Client IP Address:{}".format(address)
 
-try:
-    while(data):
-        f.write(data)
-        s.settimeout(2)
-        data,addr = s.recvfrom(buffer)
-except timeout:
-    f.close()
-    s.close()
-    print("File downloaded")
+        print(clientMsg)
+        print(clientIP)
+
+        # Sending a reply to client:
+        UDPServerSocket.sendto(bytesToSend, address)
+
+
+listen()
