@@ -6,3 +6,5 @@ def main():
     data = http.GET('https://api.darksky.net/forecast/668bf60cf034c2c299111995b6d32d81/51.5074,0.1278', 'json')
     dataPoint = WeatherDataPoints()
     dataPoint.clear_day()
+
+main()
